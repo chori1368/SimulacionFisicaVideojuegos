@@ -22,6 +22,7 @@
 // Para las escenas del curso, se incluyen los headers de las prácticas y la escena vacía
 #include "SceneManager.h"
 #include "EmptyScene.h"
+#include "Scene1.h"
 
 #include <foundation/PxSimpleTypes.h>
 #include <PxPhysicsVersion.h> // <- Macros for PhysX version checking
@@ -29,7 +30,7 @@
 #define PVD_HOST "127.0.0.1" // IP localhost for PVD connection
 
 
-std::string display_text = "This is a test";
+//std::string display_text = "This is a test";
 
 
 using namespace physx;
@@ -98,9 +99,10 @@ void initPhysics(bool interactive)
 	gScene = gPhysics->createScene(sceneDesc);
 	// Registrar las prácticas/escenas del curso
 	SceneManager::instance().registerScene<EmptyScene>("EscenaVacia");
+	SceneManager::instance().registerScene<Scene1>("Escena1");
 	
 	// Cargar la escena inicial
-	SceneManager::instance().changeScene("EscenaVacia");
+	SceneManager::instance().changeScene("Escena1");
 	
 }
 
