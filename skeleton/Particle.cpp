@@ -2,6 +2,7 @@
 
 Particle::Particle(Vector3D pos, Vector3D _vel,Vector3D xlr8, float dumping,Integrator newIntegrator) {
 	pose = physx::PxTransform(pos);
+	poset = physx::PxTransform(0,0,0);
 	vel = _vel;
 	accel = xlr8;
 	damping = dumping;
@@ -26,34 +27,30 @@ void Particle::integrate(double t) {
 		}
 		case (Integrator::Verlet):
 		{
-			integrateVerlet(t);
+			if (!poset.p.isZero()) integrateVerlet(t);
+
+			else
+			{
+				poset = pose;
+				integrateSemiEuler(t);
+			}
 		}
 	}
 }
 
 void Particle::integrateEuler(double t) {
-	pose.p.x += vel.getX() * t;
-	pose.p.y += vel.getY() * t;
-	pose.p.z += vel.getZ() * t;
+	pose.p += vel * t;
 	vel += accel * t;
-	vel = vel * pow(damping,t);
+	vel = vel * pow(damping, t);
 }
 void Particle::integrateSemiEuler(double t) {
 	vel += accel * t;
-	pose.p.x += vel.getX() * t;
-	pose.p.y += vel.getY() * t;
-	pose.p.z += vel.getZ() * t;
-	vel = vel * pow(damping,t);
+	pose.p += vel * t;
+	vel = vel * pow(damping, t);
 }
 void Particle::integrateVerlet(double t) {
-	if (poset.p.x != 0 && poset.p.y != 0 && poset.p.z != 0) {
-		poset.p.x += vel.getX() * t;
-		poset.p.y += vel.getY() * t;
-		poset.p.z += vel.getZ() * t;
-		vel += accel * t;
-		vel = vel * pow(damping, t);
-	}
-	else {
-		//pose.p.x = 2*
-	}
+	physx::PxTransform currPos = pose;
+
+	pose.p = 2 * pose.p - poset.p + physx::PxTransform(accel * pow(t, 2)).p;
+	pose = currPos;
 }

@@ -12,14 +12,14 @@ enum Integrator
 class Particle
 {
 public:
-	Particle(Vector3D Pos, Vector3D vel,Vector3D xlr8 = {0,0,0}, float dumping = 0.98, Integrator newIntegrator = Integrator::SemiEuler);
+	Particle(Vector3D Pos, Vector3D vel,Vector3D xlr8 = {0,0,0}, float dumping = 0.99, Integrator newIntegrator = Integrator::SemiEuler);
 	~Particle();
 
-	void integrate(double t);
+	virtual void integrate(double t);
 private:
 	Vector3D vel;
 	physx::PxTransform pose;
-	physx::PxTransform poset = { 0,0,0 };
+	physx::PxTransform poset;
 	Vector3D accel;
 	float damping;
 	RenderItem* renderItem;
