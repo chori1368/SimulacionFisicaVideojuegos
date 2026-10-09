@@ -1,11 +1,15 @@
 #pragma once
 #include "particle.h"
+constexpr float GRAVITY = -9.81f;
+
 class Proyectile : public Particle
 {
 public:
-	Proyectile(Vector3D Pos, Vector3D vel, float masa, Vector3D xlr8 = { 0,0,0 }, float dumping = 0.99, Integrator newIntegrator = Integrator::SemiEuler);
-	~Proyectile() {};
-protected:
-	float mass;
+    Proyectile(const Vector3D& Pos, Vector3D& dir, float realVel, float simVel, float mass);
+
+private:
+    virtual void integrateSemiEuler(double t) override;
+    float simMass;
+    float simGravity;
 };
 

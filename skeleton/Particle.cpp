@@ -1,56 +1,69 @@
+#include <cmath>
 #include "Particle.h"
 
-Particle::Particle(Vector3D pos, Vector3D _vel,Vector3D xlr8, float dumping,Integrator newIntegrator) {
-	pose = physx::PxTransform(pos);
-	poset = physx::PxTransform(0,0,0);
-	vel = _vel;
-	accel = xlr8;
-	damping = dumping;
-	physx::PxShape* sphere = CreateShape(physx::PxSphereGeometry(1.0f));
-	renderItem = new RenderItem(sphere, &pose, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-	integrator = newIntegrator;
+Particle::Particle(const Vector3D& Pos, const Vector3D& Xlr8)
+	: pose(Pos), vel(0, 0, 0), accel(Xlr8), poset(Pos) {
+	renderItem = new RenderItem(CreateShape(physx::PxSphereGeometry(0.5f), nullptr), &pose, Vector4(0.8f, 0.2f, 0.3f, 1.f));
+	renderItem->addReference();
 }
 Particle::~Particle() {
 	renderItem->release();
 }
 
-void Particle::integrate(double t) {
+void Particle::integrate(double t, Integrator integrator) {
 	// Euler
 	switch (integrator) {
 		case (Integrator::Euler):
 		{
 			integrateEuler(t);
+			break;
 		}
 		case (Integrator::SemiEuler):
 		{
 			integrateSemiEuler(t);
+			break;
 		}
 		case (Integrator::Verlet):
 		{
-			if (!poset.p.isZero()) integrateVerlet(t);
-
-			else
-			{
-				poset = pose;
-				integrateSemiEuler(t);
-			}
+			integrateVerlet(t);
+			break;
 		}
 	}
 }
 
-void Particle::integrateEuler(double t) {
-	pose.p += vel * t;
-	vel += accel * t;
-	vel = vel * pow(damping, t);
-}
-void Particle::integrateSemiEuler(double t) {
-	vel += accel * t;
-	pose.p += vel * t;
-	vel = vel * pow(damping, t);
-}
-void Particle::integrateVerlet(double t) {
-	physx::PxTransform currPos = pose;
+void Particle::integrateEuler(double t)
+{
+	// Euler
 
-	pose.p = 2 * pose.p - poset.p + physx::PxTransform(accel * pow(t, 2)).p;
-	pose = currPos;
+	pose.p = pose.p + vel * t;
+
+	vel = vel + accel * t;
+
+	vel = vel * std::pow(DAMPING, t); // Esto es para que el damping dependa también del delta. Usamos pow porque hay que contrarestarlo de forma exponencial.
+
+	accel = Vector3D(0, 0, 0);
+}
+
+void Particle::integrateSemiEuler(double t)
+{
+	// Euler semi-implicito
+
+	vel = vel + accel * t;
+
+	vel = vel * std::pow(DAMPING, t); // Esto es para que el damping dependa también del delta. Usamos pow porque hay que contrarestarlo de forma exponencial.
+
+	pose.p = pose.p + vel * t;
+
+	accel = Vector3D(0, 0, 0);
+}
+
+void Particle::integrateVerlet(double t)
+{
+	const Vector3D posDelta = (2 * pose.p - poset);
+
+	poset = pose.p;
+
+	pose.p = posDelta + accel * t * t;
+
+	accel = Vector3D(0, 0, 0);
 }
