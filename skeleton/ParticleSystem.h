@@ -5,13 +5,14 @@
 class ParticleSystem
 {
 public:
-	ParticleSystem(Vector3D Dir, Vector3D Pos, float Limit, float velvar, float dirvar, float posvar,
-		float lifevar,float genvar);
-	void update(double t);
+	ParticleSystem(Vector3D Dir, Vector3D Pos, float Limit);
+	virtual void update(double t);
 	void cleanup();
 protected:
-	void createParticle();
+	virtual void createParticle();
+	bool isWithinLimit(const Vector3D& particlePos);
 	std::vector<Particle*> particles;
+	int maxParticles;
 	float limit;
 	Vector3D pos;
 	Vector3D dir;

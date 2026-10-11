@@ -19,6 +19,7 @@ public:
 	virtual void integrate(double t, Integrator i);
 	virtual float getlife() { return life; };
 	virtual void setlife(float Life) { life = Life; };
+	virtual Vector3D getPos() { return pose.p; };
 protected:
 	Vector3D vel;
 	physx::PxTransform pose;

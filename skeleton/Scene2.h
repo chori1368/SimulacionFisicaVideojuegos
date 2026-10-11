@@ -3,7 +3,9 @@
 #include "RenderUtils.hpp"
 #include <vector>
 #include <iostream>
-#include "ParticleSystem.h"
+#include "MparticleSystem.h"
+#include "LparticleSystem.h"
+#include "FparticleSystem.h"
 
 using namespace std;
 
@@ -15,14 +17,6 @@ public:
     {}
 
     void init() override {
-        float limit = 10.0f;
-        float posvar =  0.1f;
-        float velvar = 1.0f;
-        float dirvar = 0.05f;
-        float lifevar = 1.0f;
-        float genvar = 1.0f;
-        systems.push_back(new ParticleSystem(Vector3(0,1,0), Vector3(0, 0, 0),limit,
-           velvar, dirvar, posvar,lifevar,genvar));
     }
 
     void update(double dt) override {
@@ -32,36 +26,29 @@ public:
     }
 
     void keyPress(unsigned char key, const physx::PxTransform& camera) override {
-        Vector3D shootDir = GetCamera()->getDir().getNormalized();
-        float realVel;
-        float simVel;
-        float mass = 0.f;
         switch (key) {
-        case 'c': // Bala de cañon
-            realVel = 250.f;
-            simVel = 50.f;
-            mass = 15.f;
+        case 'c': // Mangera
+            systems.push_back(new MparticleSystem(Vector3(1, 0, 0), Vector3(0, 0, 0), 100.0f));
             break;
-        case 'v': // Bala de tanque
-            realVel = 1800.f;
-            simVel = 50.f;
-            mass = 40.f;
+        case 'v': // lluvia
+            systems.push_back(new LparticleSystem(Vector3(0, -1, 0), Vector3(0, 40, 0), 100.0f));
             break;
-        case 'b': // Pistola
-            realVel = 330.f;
-            simVel = 50.f;
-            mass = .1f;
+        case 'b': // fuego artificial
+            systems.push_back(new FparticleSystem(Vector3(0, 1, 0), Vector3(0, 0, 0), 0.0f));
+            break;
+        case 'r': // eliminar fuente
+            cleanup();
             break;
         }
 
     }
 
     void cleanup() override {
-        systems.clear();
         for (ParticleSystem* p : systems) {
             p->cleanup();
             delete p;
         }
+        systems.clear();
     }
 
 private:

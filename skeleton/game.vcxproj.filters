@@ -15,6 +15,9 @@
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Proyectile.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
+    <ClCompile Include="MparticleSystem.cpp" />
+    <ClCompile Include="LparticleSystem.cpp" />
+    <ClCompile Include="FparticleSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -36,6 +39,9 @@
     <ClInclude Include="Proyectile.h" />
     <ClInclude Include="Scene2.h" />
     <ClInclude Include="ParticleSystem.h" />
+    <ClInclude Include="MparticleSystem.h" />
+    <ClInclude Include="LparticleSystem.h" />
+    <ClInclude Include="FparticleSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

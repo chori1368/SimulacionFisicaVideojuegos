@@ -262,7 +262,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="callbacks.cpp" />
+    <ClCompile Include="FparticleSystem.cpp" />
+    <ClCompile Include="LparticleSystem.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MparticleSystem.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="Proyectile.cpp" />
@@ -276,6 +279,9 @@
     <ClInclude Include="callbacks.hpp" />
     <ClInclude Include="core.hpp" />
     <ClInclude Include="EmptyScene.h" />
+    <ClInclude Include="FparticleSystem.h" />
+    <ClInclude Include="LparticleSystem.h" />
+    <ClInclude Include="MparticleSystem.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="Proyectile.h" />
