@@ -9,7 +9,7 @@ LparticleSystem::LparticleSystem(Vector3D Dir, Vector3D Pos, float Limit) :
 	lifetime_dist = std::normal_distribution<float>(6.0f, 1.0f);
 
 	part_gen_dist = std::normal_distribution<float>(1.0f, 0.01f);
-	maxParticles = 5000;
+	maxParticles = 100;
 }
 
 void LparticleSystem::createParticle() {

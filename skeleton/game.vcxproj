@@ -262,6 +262,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="callbacks.cpp" />
+    <ClCompile Include="forceGenerator.cpp" />
     <ClCompile Include="FparticleSystem.cpp" />
     <ClCompile Include="LparticleSystem.cpp" />
     <ClCompile Include="main.cpp" />
@@ -279,6 +280,7 @@
     <ClInclude Include="callbacks.hpp" />
     <ClInclude Include="core.hpp" />
     <ClInclude Include="EmptyScene.h" />
+    <ClInclude Include="forceGenerator.h" />
     <ClInclude Include="FparticleSystem.h" />
     <ClInclude Include="LparticleSystem.h" />
     <ClInclude Include="MparticleSystem.h" />
@@ -292,6 +294,7 @@
     <ClInclude Include="Scene0.h" />
     <ClInclude Include="Scene1.h" />
     <ClInclude Include="Scene2.h" />
+    <ClInclude Include="Scene3.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Vector3D.h" />
   </ItemGroup>

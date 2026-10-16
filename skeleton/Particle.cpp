@@ -3,7 +3,7 @@
 
 Particle::Particle(const Vector3D& Pos,const Vector3D& Vel ,const Vector3D& Xlr8,const float Mass,const float Life = 0.0f)
 	: pose(Pos), vel(Vel), accel(Xlr8), poset(Pos), mass(Mass),life(Life) {
-	renderItem = new RenderItem(CreateShape(physx::PxSphereGeometry(0.5f), nullptr), &pose, Vector4(0.8f, 0.2f, 0.3f, 1.f));
+	renderItem = new RenderItem(CreateShape(physx::PxSphereGeometry(0.5f), nullptr), &pose, Vector4(1.0f, 0.43f, 0.0f, 1.f));
 	renderItem->addReference();
 }
 Particle::~Particle() {

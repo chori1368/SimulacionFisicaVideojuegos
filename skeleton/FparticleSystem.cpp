@@ -9,7 +9,7 @@ FparticleSystem::FparticleSystem(Vector3D Dir, Vector3D Pos, float Limit) :
 	lifetime_dist = std::normal_distribution<float>(1.0f, 0.3f);
 
 	part_gen_dist = std::normal_distribution<float>(3.0f, 1.0f);
-	maxParticles = 500;
+	maxParticles = 100;
 
 	createParticle();
 	speed_dist = std::normal_distribution<float>(0.5f, 0.5f);
