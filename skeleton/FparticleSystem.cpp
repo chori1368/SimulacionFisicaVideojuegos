@@ -1,7 +1,7 @@
 #include "FparticleSystem.h"
 
-FparticleSystem::FparticleSystem(Vector3D Dir, Vector3D Pos, float Limit) :
-	ParticleSystem(Dir, Pos, Limit), lastDeathPos(Pos) {
+FparticleSystem::FparticleSystem(Vector3D Dir, Vector3D Pos, float Limit, float Masa, forceGenerator* fg = nullptr) :
+	ParticleSystem(Dir, Pos, Limit,Masa,fg), lastDeathPos(Pos) {
 
 	pos_dist = std::normal_distribution<float>(2.0f, 0.5f);
 	speed_dist = std::normal_distribution<float>(3.0f, 0.5f);
@@ -18,13 +18,22 @@ FparticleSystem::FparticleSystem(Vector3D Dir, Vector3D Pos, float Limit) :
 void FparticleSystem::createParticle() {
 	Vector3D const Pos = Vector3D(pos.getX() + pos_dist(generator), pos.getY() + pos_dist(generator), pos.getZ() + pos_dist(generator));
 	Vector3D const vel = Vector3D(dir.getX() + dir_dist(generator), dir.getY() + dir_dist(generator), dir.getZ() + dir_dist(generator)) * speed_dist(generator);
-	particles.push_back(new Particle(Pos, vel, Vector3D(0.0f, 0.0f, 0.0f), 1, lifetime_dist(generator)));
+	if (forceg) {
+		Particle* p = new Particle(Pos, vel, Vector3D(0.0f, 0.0f, 0.0f), masa, lifetime_dist(generator));
+		particles.push_back(p);
+		forceg->addAfeccted(p);
+	}
+	else
+		particles.push_back(new Particle(Pos, vel, Vector3D(0.0f, 9.8f, 0.0f), masa, lifetime_dist(generator)));
 }
 
 void FparticleSystem::createParticleAtPos(const Vector3D& deathPos) {
 	Vector3D const Pos = Vector3D(deathPos.getX() + pos_dist(generator), deathPos.getY() + pos_dist(generator), deathPos.getZ() + pos_dist(generator));
 	Vector3D const vel = Vector3D(dir.getX() + dir_dist(generator), dir.getY() + dir_dist(generator), dir.getZ() + dir_dist(generator)) * speed_dist(generator);
-	particles.push_back(new Particle(Pos, vel, Vector3D(0.0f, 0.0f, 0.0f), 1, lifetime_dist(generator)));
+	Particle* p = new Particle(Pos, vel, Vector3D(0.0f, 0.0f, 0.0f), masa, lifetime_dist(generator));
+	particles.push_back(p);
+	if (forceg)
+		forceg->addAfeccted(p);
 }
 
 void FparticleSystem::update(double t) {

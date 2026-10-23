@@ -1,7 +1,7 @@
 #include "MparticleSystem.h"
 
-MparticleSystem::MparticleSystem(Vector3D Dir, Vector3D Pos, float Limit) :
-	ParticleSystem(Dir,Pos,Limit) {
+MparticleSystem::MparticleSystem(Vector3D Dir, Vector3D Pos, float Limit, float Masa, forceGenerator* fg = nullptr) :
+	ParticleSystem(Dir,Pos,Limit,Masa,fg) {
 
 	pos_dist = std::normal_distribution<float>(0.0f, 0.1f);
 	speed_dist = std::normal_distribution<float>(30.0f, 1.0f);

@@ -4,5 +4,5 @@
 class MparticleSystem : public ParticleSystem
 {
 public:
-	MparticleSystem(Vector3D Dir, Vector3D Pos, float Limit);
+	MparticleSystem(Vector3D Dir, Vector3D Pos, float Limit, float Masa, forceGenerator* fg);
 };

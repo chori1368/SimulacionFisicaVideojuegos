@@ -1,7 +1,7 @@
 #include "Proyectile.h"
 
 Proyectile::Proyectile(const Vector3D& Pos, Vector3D& dir, float realVel, float simVel, float mass)
-    : Particle(Pos,0, 0, mass,0)
+    : Particle(Pos, 0, 0, mass, 0)
 {
     simMass = (mass * realVel * realVel) / (simVel * simVel);
     simGravity = GRAVITY * ((simVel * simVel) / (realVel * realVel));
@@ -11,8 +11,7 @@ Proyectile::Proyectile(const Vector3D& Pos, Vector3D& dir, float realVel, float 
 
 void Proyectile::integrateSemiEuler(double t)
 {
-    // Apply gravity
-    accel += Vector3D(0.f, simGravity, 0.f);
-
+    // aplicamos fuerza
+    addForce(Vector3D(0.f, mass * simGravity, 0.f));
     Particle::integrateSemiEuler(t);
 }

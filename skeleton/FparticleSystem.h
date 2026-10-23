@@ -4,7 +4,7 @@
 class FparticleSystem : public ParticleSystem
 {
 public:
-	FparticleSystem(Vector3D Dir, Vector3D Pos, float Limit);
+	FparticleSystem(Vector3D Dir, Vector3D Pos, float Limit, float Masa, forceGenerator* fg);
 	void update(double t) override;
 protected:
 	void createParticle() override;

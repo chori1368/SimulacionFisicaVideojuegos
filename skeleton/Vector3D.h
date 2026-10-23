@@ -55,6 +55,8 @@ public:
 	Vector3D operator+ (const Vector3D& v) const noexcept { return Vector3D(x + v.x, y + v.y, z + v.z); }
 	Vector3D operator- (const Vector3D& v) const noexcept { return Vector3D(x - v.x, y - v.y, z - v.z); }
 	Vector3D operator* (float scalar) const noexcept { return Vector3D(x * scalar, y * scalar, z * scalar); }
+	Vector3D operator/ (float scalar) const noexcept { return Vector3D(x / scalar, y / scalar, z / scalar); }
+
 
 	void operator +=(const Vector3D& v) noexcept { x += v.x; y += v.y; z += v.z; }
 

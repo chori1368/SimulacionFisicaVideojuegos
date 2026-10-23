@@ -264,6 +264,7 @@
     <ClCompile Include="callbacks.cpp" />
     <ClCompile Include="forceGenerator.cpp" />
     <ClCompile Include="FparticleSystem.cpp" />
+    <ClCompile Include="gravityForceGenerator.cpp" />
     <ClCompile Include="LparticleSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MparticleSystem.cpp" />
@@ -282,6 +283,7 @@
     <ClInclude Include="EmptyScene.h" />
     <ClInclude Include="forceGenerator.h" />
     <ClInclude Include="FparticleSystem.h" />
+    <ClInclude Include="gravityForceGenerator.h" />
     <ClInclude Include="LparticleSystem.h" />
     <ClInclude Include="MparticleSystem.h" />
     <ClInclude Include="Particle.h" />

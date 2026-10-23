@@ -1,21 +1,18 @@
 #pragma once
+#include <vector>
 #include "Particle.h"
-
-enum Force
-{
-	Gravity,
-	Wind,
-	whirlwind
-};
 
 class forceGenerator
 {
 public:
-	forceGenerator(Force fuerza);
+	forceGenerator() = default;
+	virtual ~forceGenerator() = default;
+
 	void addAfeccted(Particle* particula);
 	void removeAfeccted(Particle* particula);
 	void update(double t);
-private:
-	Force fuerza;
+
+protected:
+	virtual void applyForce(Particle* particula, double t) = 0;
 	std::vector<Particle*> particulas;
 };

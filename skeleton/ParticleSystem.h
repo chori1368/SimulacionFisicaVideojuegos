@@ -1,11 +1,12 @@
 #pragma once
 #include <random>
 #include "Particle.h"
+#include "forceGenerator.h"
 
 class ParticleSystem
 {
 public:
-	ParticleSystem(Vector3D Dir, Vector3D Pos, float Limit);
+	ParticleSystem(Vector3D Dir, Vector3D Pos, float Limit,float Masa,forceGenerator* fg = nullptr);
 	virtual void update(double t);
 	void cleanup();
 protected:
@@ -16,6 +17,8 @@ protected:
 	float limit;
 	Vector3D pos;
 	Vector3D dir;
+	float masa;
+	forceGenerator* forceg = nullptr;
 	std::default_random_engine generator;
 	std::normal_distribution<float> pos_dist;
 	std::normal_distribution<float> speed_dist;

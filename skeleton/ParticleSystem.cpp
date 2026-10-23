@@ -1,7 +1,7 @@
 #include "ParticleSystem.h"
 
-ParticleSystem::ParticleSystem(Vector3D Dir, Vector3D Pos, float Limit) :
-	pos(Pos),dir(Dir),limit(Limit){
+ParticleSystem::ParticleSystem(Vector3D Dir, Vector3D Pos, float Limit,float Masa,forceGenerator* fg = nullptr) :
+	pos(Pos),dir(Dir),limit(Limit),masa(Masa),forceg(fg){
 
 	pos_dist = std::normal_distribution<float>(0.0f, 0.1f);
 	speed_dist = std::normal_distribution<float>(30.0f, 1.0f);
@@ -15,7 +15,12 @@ ParticleSystem::ParticleSystem(Vector3D Dir, Vector3D Pos, float Limit) :
 void ParticleSystem::createParticle() {
 	Vector3D const Pos = Vector3D(pos.getX() + pos_dist(generator), pos.getY() + pos_dist(generator), pos.getZ() + pos_dist(generator));
 	Vector3D const vel = Vector3D(dir.getX() + dir_dist(generator), dir.getY() + dir_dist(generator), dir.getZ() + dir_dist(generator)) * speed_dist(generator);
-	particles.push_back(new Particle(Pos, vel, Vector3D(0.0f, -9.8f, 0.0f), 1, lifetime_dist(generator)));
+	if (forceg) {
+		Particle* p = new Particle(Pos, vel, Vector3D(0.0f, 0.0f, 0.0f), masa, lifetime_dist(generator));
+		particles.push_back(p);
+		forceg->addAfeccted(p);
+	}else
+		particles.push_back(new Particle(Pos, vel, Vector3D(0.0f, 9.8f, 0.0f), masa, lifetime_dist(generator)));
 }
 
 bool ParticleSystem::isWithinLimit(const Vector3D& particlePos) {
