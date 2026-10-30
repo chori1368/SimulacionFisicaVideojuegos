@@ -1,7 +1,8 @@
 #include "FparticleSystem.h"
+#include "forceGenerator.h"
 
-FparticleSystem::FparticleSystem(Vector3D Dir, Vector3D Pos, float Limit, float Masa, forceGenerator* fg = nullptr) :
-	ParticleSystem(Dir, Pos, Limit,Masa,fg), lastDeathPos(Pos) {
+FparticleSystem::FparticleSystem(Vector3D Dir, Vector3D Pos, float Limit, float mass, forceGenerator* gen) :
+	ParticleSystem(Dir, Pos, Limit, mass, gen), lastDeathPos(Pos) {
 
 	pos_dist = std::normal_distribution<float>(2.0f, 0.5f);
 	speed_dist = std::normal_distribution<float>(3.0f, 0.5f);
@@ -18,13 +19,13 @@ FparticleSystem::FparticleSystem(Vector3D Dir, Vector3D Pos, float Limit, float 
 void FparticleSystem::createParticle() {
 	Vector3D const Pos = Vector3D(pos.getX() + pos_dist(generator), pos.getY() + pos_dist(generator), pos.getZ() + pos_dist(generator));
 	Vector3D const vel = Vector3D(dir.getX() + dir_dist(generator), dir.getY() + dir_dist(generator), dir.getZ() + dir_dist(generator)) * speed_dist(generator);
-	if (forceg) {
-		Particle* p = new Particle(Pos, vel, Vector3D(0.0f, 0.0f, 0.0f), masa, lifetime_dist(generator));
-		particles.push_back(p);
-		forceg->addAfeccted(p);
+	Particle* p = new Particle(Pos, vel, Vector3D(0.0f, 0.0f, 0.0f), masa, lifetime_dist(generator));
+	particles.push_back(p);
+
+	// Registrar en TODOS los generadores
+	for (forceGenerator* gen : generators) {
+		if (gen) gen->addAfeccted(p);
 	}
-	else
-		particles.push_back(new Particle(Pos, vel, Vector3D(0.0f, 9.8f, 0.0f), masa, lifetime_dist(generator)));
 }
 
 void FparticleSystem::createParticleAtPos(const Vector3D& deathPos) {
@@ -32,8 +33,11 @@ void FparticleSystem::createParticleAtPos(const Vector3D& deathPos) {
 	Vector3D const vel = Vector3D(dir.getX() + dir_dist(generator), dir.getY() + dir_dist(generator), dir.getZ() + dir_dist(generator)) * speed_dist(generator);
 	Particle* p = new Particle(Pos, vel, Vector3D(0.0f, 0.0f, 0.0f), masa, lifetime_dist(generator));
 	particles.push_back(p);
-	if (forceg)
-		forceg->addAfeccted(p);
+
+	// Registrar en TODOS los generadores
+	for (forceGenerator* gen : generators) {
+		if (gen) gen->addAfeccted(p);
+	}
 }
 
 void FparticleSystem::update(double t) {
@@ -52,11 +56,16 @@ void FparticleSystem::update(double t) {
 		}
 		else {
 			lastDeathPos = p->getPos();
+			// Remover de TODOS los generadores
+			for (forceGenerator* gen : generators) {
+				if (gen) gen->removeAfeccted(p);
+			}
 			delete p;
 			it = particles.erase(it);
 			++particles_killed;
 		}
 	}
+
 	for (int k = 0; k < particles_killed; ++k) {
 		int part_to_gen = (int)part_gen_dist(generator);
 		for (int i = 0; i < part_to_gen; ++i) {

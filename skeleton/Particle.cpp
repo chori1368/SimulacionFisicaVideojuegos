@@ -12,7 +12,7 @@ Particle::~Particle() {
 }
 
 void Particle::integrate(double t, Integrator integrator) {
-	// Euler
+	// switch para utilizar el integrador
 	accel += force / mass;
 	switch (integrator) {
 	case (Integrator::Euler):

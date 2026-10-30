@@ -21,9 +21,10 @@ public:
 	virtual float getlife() { return life; };
 	virtual void setlife(float Life) { life = Life; };
 	virtual Vector3D getPos() { return pose.p; };
+	virtual Vector3D getVelocity() const { return vel; }
 
 	virtual float getMass() const { return mass; }
-	virtual void setAcceleration(const Vector3D& a) { accel = a; }
+	virtual void setBaseAcceleration(const Vector3D& a) { baseAccel = a; }
 	virtual void addForce(const Vector3D& f) { force += f; }
 	virtual void clearForces() { force = Vector3D(0.0f); }
 
@@ -33,6 +34,7 @@ protected:
 	Vector3D poset;
 
 	Vector3D accel;
+	Vector3D baseAccel;
 	Vector3D force;
 
 	RenderItem* renderItem;

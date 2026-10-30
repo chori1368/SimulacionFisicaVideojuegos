@@ -28,13 +28,13 @@ public:
     void keyPress(unsigned char key, const physx::PxTransform& camera) override {
         switch (key) {
         case 'c': // Mangera
-            systems.push_back(new MparticleSystem(Vector3(1, 0, 0), Vector3(0, 0, 0), 100.0f,1.0f));
+            systems.push_back(new MparticleSystem(Vector3(1, 0, 0), Vector3(0, 0, 0), 100.0f,1.0f,nullptr));
             break;
         case 'v': // lluvia
-            systems.push_back(new LparticleSystem(Vector3(0, -1, 0), Vector3(0, 40, 0), 100.0f,1.0f));
+            systems.push_back(new LparticleSystem(Vector3(0, -1, 0), Vector3(0, 40, 0), 100.0f,1.0f,nullptr));
             break;
         case 'b': // fuego artificial
-            systems.push_back(new FparticleSystem(Vector3(0, 1, 0), Vector3(0, 0, 0), 0.0f,1.0f));
+            systems.push_back(new FparticleSystem(Vector3(0, 1, 0), Vector3(0, 0, 0), 0.0f,1.0f,nullptr));
             break;
         case 'r': // eliminar fuente
             cleanup();

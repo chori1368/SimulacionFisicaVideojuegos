@@ -6,17 +6,24 @@ void forceGenerator::addAfeccted(Particle* particula) {
 }
 
 void forceGenerator::removeAfeccted(Particle* particula) {
-	particulas.erase(std::remove(particulas.begin(), particulas.end(), particula), particulas.end());
+	if (!particula) return;
+	auto it = std::find(particulas.begin(), particulas.end(), particula);
+	if (it != particulas.end()) {
+		particulas.erase(it);
+	}
 }
 
 void forceGenerator::update(double t) {
-	for (auto it = particulas.begin(); it != particulas.end();) {
-		Particle* p = *it;
-		if (!p) {
-			it = particulas.erase(it);
-			continue;
+	// Limpiar punteros nulos (por si acaso)
+	particulas.erase(
+		std::remove_if(particulas.begin(), particulas.end(),
+			[](Particle* p) { return p == nullptr; }),
+		particulas.end()
+	);
+
+	for (Particle* p : particulas) {
+		if (p) { // Validación extra
+			applyForce(p, t);
 		}
-		applyForce(p, t);
-		++it;
 	}
 }
