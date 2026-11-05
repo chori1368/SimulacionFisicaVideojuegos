@@ -37,8 +37,7 @@ void ParticleSystem::removeForceGenerator(forceGenerator* gen) {
 void ParticleSystem::createParticle() {
 	Vector3D const Pos = Vector3D(pos.getX() + pos_dist(generator), pos.getY() + pos_dist(generator), pos.getZ() + pos_dist(generator));
 	Vector3D const vel = Vector3D(dir.getX() + dir_dist(generator), dir.getY() + dir_dist(generator), dir.getZ() + dir_dist(generator)) * speed_dist(generator);
-	Particle* p;
-		p = new Particle(Pos, vel, Vector3D(0.0f, 0.0f, 0.0f), masa, lifetime_dist(generator));
+	Particle* p = new Particle(Pos, vel, Vector3D(0.0f, 0.0f, 0.0f), masa, lifetime_dist(generator));
 	particles.push_back(p);
 
 	// Registrar en los generadores
@@ -77,6 +76,7 @@ void ParticleSystem::update(double t) {
 				if (gen) gen->removeAfeccted(p);
 			}
 			delete p;
+			p = nullptr;
 			it = particles.erase(it);
 		}
 	}
@@ -88,11 +88,18 @@ void ParticleSystem::update(double t) {
 }
 
 void ParticleSystem::cleanup() {
+	// Deregistrar todas las partículas primero
 	for (Particle* p : particles) {
 		if (p) {
 			for (forceGenerator* gen : generators) {
 				if (gen) gen->removeAfeccted(p);
 			}
+		}
+	}
+	
+	// Luego borrar las partículas
+	for (Particle* p : particles) {
+		if (p) {
 			delete p;
 		}
 	}

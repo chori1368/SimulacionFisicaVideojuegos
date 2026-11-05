@@ -17,6 +17,8 @@ public:
 	bool isEnabled() const { return enabled; }
 	void toggleEnabled() { enabled = !enabled; }
 
+	void clearAllReferences() { particulas.clear(); }
+
 protected:
 	virtual void applyForce(Particle* particula, double t) = 0;
 	std::vector<Particle*> particulas;

@@ -9,27 +9,31 @@
 #include "MparticleSystem.h"
 #include "WhirlwindForceGenerator.h"
 
-
 using namespace std;
 
 class Scene3 : public Scene
 {
 public:
-	explicit Scene3(std::string name) : Scene(std::move(name)) {}
+	explicit Scene3(std::string name) : Scene(std::move(name)), 
+		gravityEarth(nullptr), windGen(nullptr), whirlGen(nullptr), explosionGen(nullptr) {}
+
+	~Scene3() override {
+		cleanup();
+	}
 
 	void init() override {
 		// Crear gravedad (siempre activa)
 		gravityEarth = new gravityForceGenerator(Vector3D(0.0f, -9.8f, 0.0f));
 		
-		// Viento: posición (0, 0, 0), radio 30, velocidad (30, 0, 0), k1=2.0, k2=0.0
+		// Viento
 		windGen = new windForceGenerator(Vector3D(0, 20, 0), 30.0f, Vector3D(30.0f, 0.0f, 0.0f), 2.0f, 0.0f);
-		windGen->setEnabled(false);  // Desactivado al inicio
+		windGen->setEnabled(false);
 
-		// Torbellino: centro (0, 0, 0), radio 30, K=0.5
+		// Torbellino
 		whirlGen = new WhirlwindForceGenerator(Vector3D(0.0f, 0.0f, 0.0f), 30.0f, 0.5f, 1.0f, 0.0f);
-		whirlGen->setEnabled(false);  // Desactivado al inicio
+		whirlGen->setEnabled(false);
 
-		// Explosión: centro (0, 30, 0), radio 50, intensidad K=50000, tau=0.5
+		// Explosión
 		explosionGen = new ExplosionForceGenerator(Vector3D(0, 30, 0), 50.0f, 50000.0f, 0.5f);
 
 		generators.push_back(gravityEarth);
@@ -76,14 +80,27 @@ public:
 	}
 
 	void cleanup() override {
-		for (forceGenerator* g : generators)
-			delete g;
-		generators.clear();
 		for (ParticleSystem* p : systems) {
-			p->cleanup();
-			delete p;
+			if (p) {
+				p->cleanup();
+				delete p;
+			}
 		}
 		systems.clear();
+
+		// Limpiar referencias en generadores antes de borrarlos
+		for (forceGenerator* g : generators) {
+			if (g) g->clearAllReferences();
+		}
+
+		// Luego limpiar generadores
+		for (forceGenerator* g : generators) {
+			if (g) {
+				delete g;
+			}
+		}
+		generators.clear();
+
 		gravityEarth = nullptr;
 		windGen = nullptr;
 		whirlGen = nullptr;
@@ -93,8 +110,8 @@ public:
 private:
 	std::vector<forceGenerator*> generators;
 	std::vector<ParticleSystem*> systems;
-	gravityForceGenerator* gravityEarth = nullptr;
-	windForceGenerator* windGen = nullptr;
-	WhirlwindForceGenerator* whirlGen = nullptr;
-	ExplosionForceGenerator* explosionGen = nullptr;
+	gravityForceGenerator* gravityEarth;
+	windForceGenerator* windGen;
+	WhirlwindForceGenerator* whirlGen;
+	ExplosionForceGenerator* explosionGen;
 };

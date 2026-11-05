@@ -7,7 +7,12 @@
 
 class Scene0 : public Scene {
 public:
-    explicit Scene0(std::string name) : Scene(std::move(name)) {}
+    explicit Scene0(std::string name) : Scene(std::move(name)), 
+        m_renderItem1(nullptr), m_renderItem2(nullptr), m_renderItem3(nullptr) {}
+
+    ~Scene0() override {
+        cleanup();  // Llamar cleanup en destructor
+    }
 
     void init() override {
         Vector3D u(3,1,0);
@@ -33,11 +38,11 @@ public:
         m_transform3 = physx::PxTransform(w*5);
 
         // Se registra el RenderItem exactamente como en la plantilla original
-        m_renderItem3 = new RenderItem(shapey, &m_transform3, Vector4(0.0f, 0.0f, 1.0f, 1.0f));
+        m_renderItem3 = new RenderItem(shapez, &m_transform3, Vector4(0.0f, 0.0f, 1.0f, 1.0f));
     }
 
     void update(double dt) override {
-        // LÃ³gica/IntegraciÃ³n del alumno (por ejemplo, movimiento simple)
+        // Lógica/Integración del alumno (por ejemplo, movimiento simple)
         //m_transform.p.y -= static_cast<float>(9.8 * dt);
     }
 
@@ -67,7 +72,7 @@ private:
     physx::PxTransform m_transform1;
     physx::PxTransform m_transform2;
     physx::PxTransform m_transform3;
-    RenderItem* m_renderItem1{ nullptr };
-    RenderItem* m_renderItem2{ nullptr };
-    RenderItem* m_renderItem3{ nullptr };
+    RenderItem* m_renderItem1;
+    RenderItem* m_renderItem2;
+    RenderItem* m_renderItem3;
 };
