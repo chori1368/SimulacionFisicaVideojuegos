@@ -14,16 +14,20 @@ void forceGenerator::removeAfeccted(Particle* particula) {
 }
 
 void forceGenerator::update(double t) {
-	// Limpiar punteros nulos (por si acaso)
-	particulas.erase(
-		std::remove_if(particulas.begin(), particulas.end(),
-			[](Particle* p) { return p == nullptr; }),
-		particulas.end()
-	);
+	// Si no está activado, no hacer nada
+	if (enabled) {
 
-	for (Particle* p : particulas) {
-		if (p) { // Validación extra
-			applyForce(p, t);
+		// Limpiar punteros nulos (por si acaso)
+		particulas.erase(
+			std::remove_if(particulas.begin(), particulas.end(),
+				[](Particle* p) { return p == nullptr; }),
+			particulas.end()
+		);
+
+		for (Particle* p : particulas) {
+			if (p) { // Validación extra
+				applyForce(p, t);
+			}
 		}
 	}
 }

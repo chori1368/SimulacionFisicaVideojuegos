@@ -14,10 +14,7 @@ public:
 
 protected:
 	void applyForce(Particle* particula, double t) override;
-
-private:
 	bool isInInfluenceZone(const Vector3D& particlePos) const;
-
 	Vector3D position;    // Centro del volumen de influencia
 	float radius;         // Radio de influencia (esfera)
 	Vector3D windVelocity;   // Velocidad del viento

@@ -5,14 +5,20 @@
 class forceGenerator
 {
 public:
-	forceGenerator() = default;
+	forceGenerator() : enabled(true) {}
 	virtual ~forceGenerator() = default;
 
 	void addAfeccted(Particle* particula);
 	void removeAfeccted(Particle* particula);
-	void update(double t);
+	virtual void update(double t);
+
+	// Control de activación
+	void setEnabled(bool state) { enabled = state; }
+	bool isEnabled() const { return enabled; }
+	void toggleEnabled() { enabled = !enabled; }
 
 protected:
 	virtual void applyForce(Particle* particula, double t) = 0;
 	std::vector<Particle*> particulas;
+	bool enabled;
 };

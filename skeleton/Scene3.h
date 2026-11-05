@@ -5,7 +5,10 @@
 #include <iostream>
 #include "gravityForceGenerator.h"
 #include "windForceGenerator.h"
+#include "ExplosionForceGenerator.h"
 #include "MparticleSystem.h"
+#include "WhirlwindForceGenerator.h"
+
 
 using namespace std;
 
@@ -15,28 +18,52 @@ public:
 	explicit Scene3(std::string name) : Scene(std::move(name)) {}
 
 	void init() override {
-		// Crear gravedad (predeterminada en todos)
+		// Crear gravedad (siempre activa)
 		gravityEarth = new gravityForceGenerator(Vector3D(0.0f, -9.8f, 0.0f));
 		
-		// Viento: posición (0, 0, 0), radio 30, velocidad (10, 0, 0), k1=1.0, k2=0.0
-		windGen = new windForceGenerator(Vector3D(0,0, 0), 30.0f, Vector3D(10.0f, 0.0f, 0.0f), 1.0f, 0.0f);
+		// Viento: posición (0, 0, 0), radio 30, velocidad (30, 0, 0), k1=2.0, k2=0.0
+		windGen = new windForceGenerator(Vector3D(0, 20, 0), 30.0f, Vector3D(30.0f, 0.0f, 0.0f), 2.0f, 0.0f);
+		windGen->setEnabled(false);  // Desactivado al inicio
+
+		// Torbellino: centro (0, 0, 0), radio 30, K=0.5
+		whirlGen = new WhirlwindForceGenerator(Vector3D(0.0f, 0.0f, 0.0f), 30.0f, 0.5f, 1.0f, 0.0f);
+		whirlGen->setEnabled(false);  // Desactivado al inicio
+
+		// Explosión: centro (0, 30, 0), radio 50, intensidad K=50000, tau=0.5
+		explosionGen = new ExplosionForceGenerator(Vector3D(0, 30, 0), 50.0f, 50000.0f, 0.5f);
 
 		generators.push_back(gravityEarth);
 		generators.push_back(windGen);
+		generators.push_back(whirlGen);
+		generators.push_back(explosionGen);
 
-		// Sistema 1: solo gravedad
-		ParticleSystem* sys1 = new MparticleSystem(Vector3D(0, 0, 0), Vector3D(-15, 50, 0), 100.0f, 1.0f, gravityEarth);
+		// Sistema 1: masa 1.0f, a la izquierda
+		ParticleSystem* sys1 = new MparticleSystem(Vector3D(0, -1, 0), Vector3D(-15, 50, 0), 100.0f, 1.0f, gravityEarth);
+		sys1->addForceGenerator(windGen);
+		sys1->addForceGenerator(whirlGen);
+		sys1->addForceGenerator(explosionGen);
 		systems.push_back(sys1);
 
-		// Sistema 2: gravedad + viento
-		ParticleSystem* sys2 = new MparticleSystem(Vector3D(0, 0, 0), Vector3D(0, 50, 0), 100.0f, 1.0f, gravityEarth);
-		sys2->addForceGenerator(windGen);  // Agregar viento además de gravedad
+		// Sistema 2: masa 5.0f, a la derecha
+		ParticleSystem* sys2 = new MparticleSystem(Vector3D(0, -1, 0), Vector3D(15, 50, 0), 100.0f, 5.0f, gravityEarth);
+		sys2->addForceGenerator(windGen);
+		sys2->addForceGenerator(whirlGen);
+		sys2->addForceGenerator(explosionGen);
 		systems.push_back(sys2);
+	}
 
-		// Sistema 3: solo gravedad
-		ParticleSystem* sys3 = new MparticleSystem(Vector3D(0, 0, 0), Vector3D(15, 50, 0), 100.0f, 20.0f, gravityEarth);
-		sys3->addForceGenerator(windGen);  // Agregar viento además de gravedad
-		systems.push_back(sys3);
+	void keyPress(unsigned char key, const physx::PxTransform& camera) override {
+		switch (key) {
+		case 'v':  // Activar/desactivar viento
+			windGen->toggleEnabled();
+			break;
+		case 'b':  // Activar/desactivar remolino
+			whirlGen->toggleEnabled();
+			break;
+		case 'n':  // Provocar explosión
+			explosionGen->triggerExplosion();
+			break;
+		}
 	}
 
 	void update(double dt) override {
@@ -59,6 +86,8 @@ public:
 		systems.clear();
 		gravityEarth = nullptr;
 		windGen = nullptr;
+		whirlGen = nullptr;
+		explosionGen = nullptr;
 	}
 
 private:
@@ -66,6 +95,6 @@ private:
 	std::vector<ParticleSystem*> systems;
 	gravityForceGenerator* gravityEarth = nullptr;
 	windForceGenerator* windGen = nullptr;
-	float k1 = 1.0f;
-	float k2 = 0.0f;
+	WhirlwindForceGenerator* whirlGen = nullptr;
+	ExplosionForceGenerator* explosionGen = nullptr;
 };
