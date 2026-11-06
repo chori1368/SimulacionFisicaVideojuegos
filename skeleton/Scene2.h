@@ -16,6 +16,10 @@ public:
     explicit Scene2(std::string name) : Scene(std::move(name))
     {}
 
+    ~Scene2() override {
+        cleanup();
+    }
+
     void init() override {
     }
 
@@ -45,8 +49,10 @@ public:
 
     void cleanup() override {
         for (ParticleSystem* p : systems) {
-            p->cleanup();
-            delete p;
+            if (p) {
+                p->cleanup();
+                delete p;
+            }
         }
         systems.clear();
     }
