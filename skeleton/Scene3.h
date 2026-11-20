@@ -30,11 +30,11 @@ public:
 		windGen->setEnabled(false);
 
 		// Torbellino
-		whirlGen = new WhirlwindForceGenerator(Vector3D(0.0f, 0.0f, 0.0f), 30.0f, 0.5f, 1.0f, 0.0f);
+		whirlGen = new WhirlwindForceGenerator(Vector3D(0.0f, 15.0f, 0.0f), 35.0f, 1.5f, 8.0f, 0.3f);
 		whirlGen->setEnabled(false);
 
 		// Explosión
-		explosionGen = new ExplosionForceGenerator(Vector3D(0, 30, 0), 50.0f, 50000.0f, 0.5f);
+		explosionGen = new ExplosionForceGenerator(Vector3D(0, 30, 0), 50.0f, 500000.0f, 0.5f);
 
 		generators.push_back(gravityEarth);
 		generators.push_back(windGen);
@@ -42,14 +42,14 @@ public:
 		generators.push_back(explosionGen);
 
 		// Sistema 1: masa 1.0f, a la izquierda
-		ParticleSystem* sys1 = new MparticleSystem(Vector3D(0, -1, 0), Vector3D(-15, 50, 0), 100.0f, 1.0f, gravityEarth);
+		ParticleSystem* sys1 = new MparticleSystem(Vector3D(0, -1, 0), Vector3D(-15, 50, 0), 1000.0f, 1.0f, gravityEarth);
 		sys1->addForceGenerator(windGen);
 		sys1->addForceGenerator(whirlGen);
 		sys1->addForceGenerator(explosionGen);
 		systems.push_back(sys1);
 
 		// Sistema 2: masa 5.0f, a la derecha
-		ParticleSystem* sys2 = new MparticleSystem(Vector3D(0, -1, 0), Vector3D(15, 50, 0), 100.0f, 5.0f, gravityEarth);
+		ParticleSystem* sys2 = new MparticleSystem(Vector3D(0, -1, 0), Vector3D(15, 50, 0), 1000.0f, 5.0f, gravityEarth);
 		sys2->addForceGenerator(windGen);
 		sys2->addForceGenerator(whirlGen);
 		sys2->addForceGenerator(explosionGen);

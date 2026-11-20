@@ -9,30 +9,28 @@ WhirlwindForceGenerator::WhirlwindForceGenerator(const Vector3D& center, float r
 }
 
 Vector3D WhirlwindForceGenerator::calculateWhirlwindVelocity(const Vector3D& particlePos) const {
-	// Distancia desde el centro del torbellino
 	Vector3D diff = particlePos - center;
-	float distance = diff.magnitude();
+
+	// Distancia en el plano XZ (ignorar Y)
+	float dx = particlePos.getX() - center.getX();
+	float dz = particlePos.getZ() - center.getZ();
+	float distanceXZ = std::sqrt(dx * dx + dz * dz);
 
 	// Si está muy cerca del centro, velocidad casi nula
-	if (distance < 0.1f) {
+	if (distanceXZ < 0.1f) {
 		return Vector3D(0.0f, 0.0f, 0.0f);
 	}
 
-	// Fórmula del torbellino:
-	// v_torbellino(x, y) = K * [
-	//   -(z - zc)
-	//   50 - (y - yc)
-	//   x - xc
-	// ]
+	// Vector tangencial perpendicular al radio (normalizado)
+	// Rotación en sentido antihorario visto desde arriba
+	float tangentX = -dz / distanceXZ;
+	float tangentZ = dx / distanceXZ;
 
-	float dx = particlePos.getX() - center.getX();
-	float dy = particlePos.getY() - center.getY();
-	float dz = particlePos.getZ() - center.getZ();
-
+	// Velocidad tangencial escalonada por distancia (efecto de remolino)
 	Vector3D whirlwindVel = Vector3D(
-		-K * dz,
-		K * (50.0f - dy),
-		K * dx
+		K * distanceXZ * tangentX,
+		0.0f,
+		K * distanceXZ * tangentZ
 	);
 
 	return whirlwindVel;
