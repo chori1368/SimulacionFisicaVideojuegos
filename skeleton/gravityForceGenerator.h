@@ -1,7 +1,7 @@
 #pragma once
 #include "forceGenerator.h"
 
-class gravityForceGenerator final : public forceGenerator
+class gravityForceGenerator : public forceGenerator
 {
 public:
 	gravityForceGenerator(const Vector3D& gravityAccel);

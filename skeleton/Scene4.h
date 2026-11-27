@@ -24,12 +24,13 @@ public:
 	}
 
 	void init() override {
-		// ===== GENERADORES DE FUERZAS =====
+		// generadores
 		gravityGen = new gravityForceGenerator(Vector3D(0.0f, -9.8f, 0.0f));
-		windGen = new windForceGenerator(Vector3D(0, 20, 0), 30.0f, Vector3D(30.0f, 0.0f, 0.0f), 2.0f, 0.0f);
+		gravityGen->setEnabled(false);
+		windGen = new windForceGenerator(Vector3D(0, 20, 0), 30.0f, Vector3D(-30.0f, 0.0f, 0.0f), 1.0f, 0.0f);
 		windGen->setEnabled(false);
 
-		// ===== SISTEMA 1: Partícula con muelle a punto fijo =====
+		// particula a un anchor
 		Vector3D anchorPoint1(0.0f, 25.0f, 0.0f);
 		anchorParticle1 = new Particle(anchorPoint1, Vector3D(0.0f, 0.0f, 0.0f), 
 									   Vector3D(0.0f, 0.0f, 0.0f), 1.0f, 5000.0f);
@@ -50,7 +51,7 @@ public:
 			Vector4(0.0f, 1.0f, 0.0f, 1.0f)
 		);
 
-		// ===== SISTEMA 2: Dos partículas unidas por muelle =====
+		// dos particulas entre si
 		particle2a = new Particle(
 			Vector3D(-8.0f, 15.0f, 0.0f),
 			Vector3D(0.0f, 0.0f, 0.0f),
@@ -65,10 +66,12 @@ public:
 			1.0f, 5000.0f
 		);
 
-		springGen2 = new SpringForceGenerator(k, 6.0f, particle2b);
-		springGen2->addAfeccted(particle2a);
+		springGen21 = new SpringForceGenerator(k, 6.0f, particle2b);
+		springGen21->addAfeccted(particle2a);
+		springGen22 = new SpringForceGenerator(k, 6.0f, particle2a);
+		springGen22->addAfeccted(particle2b);
 
-		// ===== SISTEMA 3: Dos partículas unidas por banda elástica =====
+		//  dos particulas con banda elastica
 		particle3a = new Particle(
 			Vector3D(2.0f, 15.0f, 0.0f),
 			Vector3D(0.0f, 0.0f, 0.0f),
@@ -83,14 +86,24 @@ public:
 			1.0f, 5000.0f
 		);
 
-		elasticGen = new ElasticBandForceGenerator(k, 6.0f, particle3b);
-		elasticGen->addAfeccted(particle3a);
+		elasticGen1 = new ElasticBandForceGenerator(k, 6.0f, particle3b);
+		elasticGen1->addAfeccted(particle3a);
+		elasticGen2 = new ElasticBandForceGenerator(k, 6.0f, particle3a);
+		elasticGen2->addAfeccted(particle3b);
 
-		// ===== AGREGAR FUERZAS A TODAS LAS PARTÍCULAS =====
-		vector<Particle*> allParticles = { particle1, particle2a, particle2b, particle3a, particle3b };
+
+
+
+
+
+		// añadir particulas a generadores
+		vector<Particle*> allParticles = { particle2a, particle3a };
+		for (Particle* p : allParticles) {
+			windGen->addAfeccted(p);
+		}
+		allParticles = { particle1 };
 		for (Particle* p : allParticles) {
 			gravityGen->addAfeccted(p);
-			windGen->addAfeccted(p);
 		}
 	}
 
@@ -99,25 +112,29 @@ public:
 		case 'k':  // Aumentar k
 			k += 10.0f;
 			springGen1->setK(k);
-			springGen2->setK(k);
-			elasticGen->setK(k);
+			springGen21->setK(k);
+			springGen22->setK(k);
+			elasticGen1->setK(k);
+			elasticGen2->setK(k);
 			cout << "k = " << k << endl;
 			break;
 
 		case 'l':  // Disminuir k
 			k = max(1.0f, k - 10.0f);
 			springGen1->setK(k);
-			springGen2->setK(k);
-			elasticGen->setK(k);
+			springGen21->setK(k);
+			springGen22->setK(k);
+			elasticGen1->setK(k);
+			elasticGen2->setK(k);
 			cout << "k = " << k << endl;
 			break;
 
-		case 'e':  // Euler explícito
+		case 'n':  // Euler explícito
 			currentIntegrator = Integrator::Euler;
 			cout << "Integrador: Euler" << endl;
 			break;
 
-		case 's':  // Euler semi-implícito
+		case 'b':  // Euler semi-implícito
 			currentIntegrator = Integrator::SemiEuler;
 			cout << "Integrador: SemiEuler" << endl;
 			break;
@@ -139,7 +156,7 @@ public:
 			cout << "Gravedad: " << (gravityEnabled ? "ON" : "OFF") << endl;
 			break;
 
-		case 'w':  // Activar/desactivar viento
+		case 'h':  // Activar/desactivar viento
 			windEnabled = !windEnabled;
 			windGen->setEnabled(windEnabled);
 			cout << "Viento: " << (windEnabled ? "ON" : "OFF") << endl;
@@ -151,8 +168,10 @@ public:
 		gravityGen->update(dt);
 		windGen->update(dt);
 		springGen1->update(dt);
-		springGen2->update(dt);
-		elasticGen->update(dt);
+		springGen21->update(dt);
+		springGen22->update(dt);
+		elasticGen1->update(dt);
+		elasticGen2->update(dt);
 
 		// Integrar todas las partículas (excepto anclajes)
 		particle1->integrate(dt, currentIntegrator);
@@ -184,13 +203,21 @@ public:
 			springGen1->clearAllReferences();
 			delete springGen1;
 		}
-		if (springGen2) {
-			springGen2->clearAllReferences();
-			delete springGen2;
+		if (springGen21) {
+			springGen21->clearAllReferences();
+			delete springGen21;
 		}
-		if (elasticGen) {
-			elasticGen->clearAllReferences();
-			delete elasticGen;
+		if (springGen22) {
+			springGen22->clearAllReferences();
+			delete springGen22;
+		}
+		if (elasticGen1) {
+			elasticGen1->clearAllReferences();
+			delete elasticGen1;
+		}
+		if (elasticGen2) {
+			elasticGen2->clearAllReferences();
+			delete elasticGen2;
 		}
 		if (anchorRender1) {
 			anchorRender1->release();
@@ -206,8 +233,10 @@ public:
 		gravityGen = nullptr;
 		windGen = nullptr;
 		springGen1 = nullptr;
-		springGen2 = nullptr;
-		elasticGen = nullptr;
+		springGen21 = nullptr;
+		springGen22 = nullptr;
+		elasticGen1 = nullptr;
+		elasticGen2 = nullptr;
 		anchorRender1 = nullptr;
 	}
 
@@ -224,8 +253,10 @@ private:
 	gravityForceGenerator* gravityGen = nullptr;
 	windForceGenerator* windGen = nullptr;
 	SpringForceGenerator* springGen1 = nullptr;
-	SpringForceGenerator* springGen2 = nullptr;
-	ElasticBandForceGenerator* elasticGen = nullptr;
+	SpringForceGenerator* springGen21 = nullptr;
+	SpringForceGenerator* springGen22 = nullptr;
+	ElasticBandForceGenerator* elasticGen1 = nullptr;
+	ElasticBandForceGenerator* elasticGen2 = nullptr;
 
 	// Visualización
 	RenderItem* anchorRender1 = nullptr;
